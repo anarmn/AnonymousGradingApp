@@ -2,6 +2,7 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const Sequelize = require('sequelize')
 const mysql = require('mysql2/promise')
+const cors=require('cors')
 
 let conn
 
@@ -37,6 +38,14 @@ const Person = sequelize.define('person', {
         type: Sequelize.STRING,
         allowNull: false,
     },
+    group: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+    },
+    series: {
+        type: Sequelize.STRING,
+        allowNull: false,
+    },
     username: {
         type: Sequelize.STRING,
         allowNull: false,
@@ -58,8 +67,8 @@ const Project = sequelize.define('project', {
         allowNull: false,
         primaryKey: true
     },
-    file: {
-        type: Sequelize.BLOB,
+    fileLink: {
+        type: Sequelize.STRING,
         allowNull: true
     },
     version: {
@@ -90,7 +99,7 @@ const Project = sequelize.define('project', {
     })
 
 //Se creeaza tabela note si se definesc campurile aferente
-//Cheia primara este compusa pentru a putea distinge intre versiuni si membrii ai juriului
+//Cheia primara este compusa pentru a putea distinge intre versiuni, detinatorul versiunii si membrii ai juriului
 const Grade = sequelize.define('grade', {
     projectID: {
         type: Sequelize.INTEGER,
@@ -98,6 +107,11 @@ const Grade = sequelize.define('grade', {
         primaryKey: true
     },
     version: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        primaryKey: true
+    },
+    ownerID: {
         type: Sequelize.INTEGER,
         allowNull: false,
         primaryKey: true
@@ -119,6 +133,7 @@ const Grade = sequelize.define('grade', {
 
 
 const app = express()
+app.use(cors())
 app.use(bodyParser.json())
 
 //Se creaza tabelele definite anterior in caz ca acestea nu exista
@@ -132,7 +147,7 @@ app.get('/create', async (req, res, next) => {
 })
 
 //Se populeaza o intrare in tabela de persoane
-app.post('/people', async (req, res, next) => {
+app.post('/person', async (req, res, next) => {
     try {
         await Person.create(req.body)
         res.status(201).json({ message: 'created' })
@@ -216,16 +231,18 @@ app.post('/grades', async (req, res, next) => {
     }
 })
 
-//Se obtine lista de note ale unui proiect cu o anumita versiune
-app.get('/grades/:projectID/:version', async (req, res, next) => {
+//Se obtine lista de note ale unui proiect cu o anumita versiune si un anumit detinator
+app.get('/grades/:projectID/:version/:ownerID', async (req, res, next) => {
     try {
         let projID = req.params.projectID
         let versionID = req.params.version
+        let owner = req.params.ownerID
         const grades = await Grade.findAll({
             where:
             {
                 projectID: projID,
-                version: versionID
+                version: versionID,
+                ownerID: owner
             }
         })
         res.status(200).json(grades)
@@ -250,16 +267,18 @@ app.get('/grades/:judgeID', async (req, res, next) => {
     }
 })
 
-//Se modifica nota unui evaluator pentru un anumit proiect cu o anumita versiune
-app.put('/grades/:projectID/:version/:judgeID', async (req, res, next) => {
+//Se modifica nota unui evaluator pentru un anumit proiect cu o anumita versiune cu un anumit detinator
+app.put('/grades/:projectID/:version/:ownerID/:judgeID', async (req, res, next) => {
     try {
         let projID = req.params.projectID
         let versionID = req.params.version
+        let owner = req.params.ownerID
         let judge = req.params.judgeID
         await Grade.update(req.body, {
             where: {
                 projectID: projID,
                 version: versionID,
+                ownerID: owner,
                 judgeID: judge
             }
         })
