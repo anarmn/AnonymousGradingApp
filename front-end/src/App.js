@@ -3,12 +3,15 @@ import React from 'react'
 import store from './PersonStore'
 import PersonAddForm from './PersonAddForm'
 import PersonLogIn from './PersonLogIn'
+import Person from './Person'
 import StudentProjectList from './StudentProjectList'
 import ProjectAddForm from './ProjectAddForm'
 import projectStore from './ProjectStore'
 import Project from './Project'
 import Select from 'react-select'
 let listaMembrii = []
+let listaEchipa = []
+let selectedMemberId = -1
 
 class App extends React.Component{
   constructor(){
@@ -20,7 +23,8 @@ class App extends React.Component{
       registerType: 'Log In',
       projectStatus: 'myProjects',
       isCorrect: false,
-      loggedPersonId: -1
+      loggedPersonId: -1,
+      loggedPersonType: ''
     }
     this.logIn =(value)=>
     {
@@ -30,7 +34,8 @@ class App extends React.Component{
           {
             this.setState({
               isCorrect: true,
-              loggedPersonId: person.id
+              loggedPersonId: person.id,
+              loggedPersonType: person.type
             })
             this.state.projects.forEach(project => {
               if(project.personID === person.id && project.version === 1)
@@ -60,15 +65,27 @@ class App extends React.Component{
       }
       let grupa = parseInt(person.group)
       let serie = parseInt(person.series)
-      if(isNaN(grupa))
+      if(isNaN(grupa) && person.type === 'STUDENT')
       {
         check = false
         alert('Grupa trebuie sa fie numerica')
       }
-      if(!isNaN(serie))
+
+      if(!isNaN(serie) && person.type === 'STUDENT')
       {
         check = false
         alert('Seria trebuie sa fie litera')
+      }
+      if(person.group.toString().length === 0 && person.type === 'STUDENT')
+      {
+        check = false
+        alert('Grupa trebuie completata')
+      }
+
+      if(person.series.toString().length !== 1 && person.type === 'STUDENT')
+      {
+        check = false
+        alert('Seria trebuie sa fie aiba o singura litera')
       }
       this.state.people.forEach(existentPerson => {
         if(person.username === existentPerson.username)
@@ -81,6 +98,11 @@ class App extends React.Component{
       {
         person.series = person.series.toUpperCase()
         person.group = grupa
+        if(person.type === 'TEACHER')
+        {
+          person.group = 0
+          person.series = ''
+        }
         store.addOne(person)
         this.state.people.push(person)
         this.setState({
@@ -97,9 +119,11 @@ class App extends React.Component{
       this.setState({
         projectStatus: 'create'
       })
+      listaEchipa = []
       listaMembrii = []
+      selectedMemberId = -1
       this.state.people.forEach(person=>{
-        if(this.state.loggedPersonId !== person.id)
+        if(this.state.loggedPersonId !== person.id && person.type !== 'TEACHER')
         {
           let l = person.name + ", grupa " + person.group + ", seria " + person.series
           let v = person.id
@@ -109,7 +133,15 @@ class App extends React.Component{
           }
           listaMembrii.push(item)
         }
+        if(this.state.loggedPersonId === person.id)
+        {
+          listaEchipa.push(person)
+        }
       })
+    }
+    this.selectieMembruEchipa=(evt)=>
+    {
+        selectedMemberId = evt.value
     }
     this.myProjects=()=>{
       this.setState({
@@ -122,10 +154,34 @@ class App extends React.Component{
       })
     }
     this.addMembruToProject=()=>{
-      console.log("adaugat")
+      if(selectedMemberId === -1)
+      {
+        alert('Trebuie selectat un membru pe care vreti sa il adaugati din lista')
+      }
+      else
+      {
+        this.state.people.forEach(person =>{
+          if(person.id === selectedMemberId)
+          {
+            listaEchipa.push(person)
+          }
+        })
+        let contor = 0
+        let index = 0
+        listaMembrii.forEach(item => {
+          if(item.value === selectedMemberId)
+          {
+            index = contor
+          }
+          contor++
+        })
+        listaMembrii.splice(index, 1)
+        this.setState({
+        })
+        selectedMemberId = -1
+      }
     }
     this.addProject=(project)=>{
-      console.log(JSON.stringify(project))
       let check = true
       let an = parseInt(project.year)
       let luna = parseInt(project.month)
@@ -133,6 +189,10 @@ class App extends React.Component{
       let ora = parseInt(project.hour)
       let minute = parseInt(project.minutes)
       let secunde = parseInt(project.seconds)
+      if(project.title.toString().length === 0)
+      {
+        alert("Titlul nu trebuie sa fie gol")
+      }
       if(isNaN(an))
       {
         check = false
@@ -225,7 +285,7 @@ class App extends React.Component{
       }
       if(check === true)
       {
-        let deadline = ''
+        let deadlineDeAdaugat = ''
         if(luna.toString().length === 1)
         {
           luna = '0' + luna
@@ -246,8 +306,19 @@ class App extends React.Component{
         {
           secunde = '0' + secunde
         }
-        deadline = an + '-' + luna + '-' + zi + ' ' + ora + ':' + minute + ':' + secunde
-        console.log(deadline)
+        deadlineDeAdaugat = an + '-' + luna + '-' + zi + ' ' + ora + ':' + minute + ':' + secunde
+        listaEchipa.forEach(membru => { 
+          let proiectDeAdaugat ={
+            version: 1,
+            title: project.title,
+            deadline: deadlineDeAdaugat,
+            personID: membru.id
+          }
+          projectStore.addOne(proiectDeAdaugat)
+        })
+        this.setState({
+          projectStatus: 'myProjects'
+        })
       }
     }
   }
@@ -263,10 +334,30 @@ class App extends React.Component{
     })
     projectStore.getAll()
     projectStore.emitter.addListener('GET_PROJECTS_SUCCES',()=>{
-      this.setState({
-        projects:projectStore.data
-      })
+      if(this.state.loggedPersonId !== -1)
+      {
+        let listaProiecteProprii = []
+        projectStore.data.forEach(proiect => {
+            if(proiect.personID === this.state.loggedPersonId && proiect.version === 1)
+            {
+              listaProiecteProprii.push(proiect)
+            }
+        })
+        this.setState({
+          projects:projectStore.data,
+          myProjects: listaProiecteProprii
+        })
+      }
+      else
+      {
+        this.setState({
+          projects:projectStore.data
+        })
+      }
     })
+    setInterval(function(){
+      projectStore.getAll()
+    },10000)
   }
 render(){
   if((this.state.registerType === 'Log In') && (this.state.isCorrect === false))
@@ -277,7 +368,7 @@ render(){
         </div>
     )
   }
-  else if(this.state.registerType === 'Sign In'&&(this.state.isCorrect === false))
+  else if(this.state.registerType === 'Sign In'&& (this.state.isCorrect === false))
   {return (
   <div>
 {/* ii dau fct add ca proprietate */}
@@ -285,7 +376,7 @@ render(){
   </div>
   )
   }
-  else if(this.state.isCorrect === true && this.state.projectStatus === 'create')
+  else if(this.state.isCorrect === true && this.state.projectStatus === 'create' && this.state.loggedPersonType === 'STUDENT')
   {
     return (    <div>
       <div style={{display: 'block'}}>
@@ -293,9 +384,10 @@ render(){
       </div>
       <div>Membrii echipei: </div>
       <ul>
+        {listaEchipa.map(e=><li><Person item={e} key={e.id}/></li>)}
       </ul>
       <br/>
-      <Select name="membriiAditionali" id="membriiAditionali" options={listaMembrii}></Select>
+      <Select name="membriiAditionali" id="membriiAditionali" options={listaMembrii} onChange={this.selectieMembruEchipa}></Select>
       <br/>
       <input type="button" value="addMembruToProject" onClick={this.addMembruToProject}></input>
       <br/>
@@ -305,7 +397,7 @@ render(){
       </div>
     </div>)
   }
-  else if(this.state.isCorrect === true && this.state.projectStatus === 'myProjects')
+  else if(this.state.isCorrect === true && this.state.projectStatus === 'myProjects' && this.state.loggedPersonType === 'STUDENT')
   {
     return (    <div>
       <div style={{display: 'block'}}>

@@ -60,21 +60,14 @@ const Person = sequelize.define('person', {
     })
 
 //Se creeaza tabela proiecte si se definesc campurile aferente
-//Cheia primara este compusa pentru a putea distinge intre versiuni si membrii ai echipei
 const Project = sequelize.define('project', {
-    id: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        primaryKey: true
-    },
     fileLink: {
         type: Sequelize.STRING,
         allowNull: true
     },
     version: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        primaryKey: true
+        allowNull: false
     },
     title: {
         type: Sequelize.STRING,
@@ -82,7 +75,7 @@ const Project = sequelize.define('project', {
     },
     deadline: {
         type: Sequelize.DATE,
-        allowNull: false,
+        allowNull: false
     },
     final_grade: {
         type: Sequelize.DOUBLE,
@@ -90,8 +83,7 @@ const Project = sequelize.define('project', {
     },
     personID: {
         type: Sequelize.INTEGER,
-        allowNull: false,
-        primaryKey: true
+        allowNull: false
     }
 },
     {
