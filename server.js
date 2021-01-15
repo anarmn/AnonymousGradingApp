@@ -91,27 +91,14 @@ const Project = sequelize.define('project', {
     })
 
 //Se creeaza tabela note si se definesc campurile aferente
-//Cheia primara este compusa pentru a putea distinge intre versiuni, detinatorul versiunii si membrii ai juriului
 const Grade = sequelize.define('grade', {
-    projectID: {
-        type: Sequelize.INTEGER,
+    projectTitle: {
+        type: Sequelize.STRING,
         allowNull: false,
-        primaryKey: true
     },
     version: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        primaryKey: true
-    },
-    ownerID: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        primaryKey: true
-    },
-    judgeID: {
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        primaryKey: true
     },
     grade: {
         type: Sequelize.DOUBLE,
@@ -223,62 +210,72 @@ app.post('/grades', async (req, res, next) => {
     }
 })
 
+//Se obtine lista de note
+app.get('/grades', async (req, res, next) => {
+    try {
+        const grades = await Grade.findAll()
+        res.status(200).json(grades)
+    } catch (err) {
+        next(err)
+    }
+})
+
 //Se obtine lista de note ale unui proiect cu o anumita versiune si un anumit detinator
-app.get('/grades/:projectID/:version/:ownerID', async (req, res, next) => {
-    try {
-        let projID = req.params.projectID
-        let versionID = req.params.version
-        let owner = req.params.ownerID
-        const grades = await Grade.findAll({
-            where:
-            {
-                projectID: projID,
-                version: versionID,
-                ownerID: owner
-            }
-        })
-        res.status(200).json(grades)
-    } catch (err) {
-        next(err)
-    }
-})
+// app.get('/grades/:projectID/:version/:ownerID', async (req, res, next) => {
+//     try {
+//         let projID = req.params.projectID
+//         let versionID = req.params.version
+//         let owner = req.params.ownerID
+//         const grades = await Grade.findAll({
+//             where:
+//             {
+//                 projectID: projID,
+//                 version: versionID,
+//                 ownerID: owner
+//             }
+//         })
+//         res.status(200).json(grades)
+//     } catch (err) {
+//         next(err)
+//     }
+// })
 
-//Se obtine lista de proiecte de evaluat ale unui evaluator
-app.get('/grades/:judgeID', async (req, res, next) => {
-    try {
-        let judge = req.params.judgeID
-        const grades = await Grade.findAll({
-            where:
-            {
-                judgeID: judge
-            }
-        })
-        res.status(200).json(grades)
-    } catch (err) {
-        next(err)
-    }
-})
+// Se obtine lista de proiecte de evaluat ale unui evaluator
+// app.get('/grades/:judgeID', async (req, res, next) => {
+//     try {
+//         let judge = req.params.judgeID
+//         const grades = await Grade.findAll({
+//             where:
+//             {
+//                 judgeID: judge
+//             }
+//         })
+//         res.status(200).json(grades)
+//     } catch (err) {
+//         next(err)
+//     }
+// })
 
-//Se modifica nota unui evaluator pentru un anumit proiect cu o anumita versiune cu un anumit detinator
-app.put('/grades/:projectID/:version/:ownerID/:judgeID', async (req, res, next) => {
-    try {
-        let projID = req.params.projectID
-        let versionID = req.params.version
-        let owner = req.params.ownerID
-        let judge = req.params.judgeID
-        await Grade.update(req.body, {
-            where: {
-                projectID: projID,
-                version: versionID,
-                ownerID: owner,
-                judgeID: judge
-            }
-        })
-        res.status(200).json({ message: "updated" })
-    } catch (err) {
-        next(err)
-    }
-})
+// Se modifica nota unui evaluator pentru un anumit proiect cu o anumita versiune cu un anumit detinator
+// app.put('/grades/:projectID/:version/:ownerID/:judgeID', async (req, res, next) => {
+//     try {
+//         let projID = req.params.projectID
+//         let versionID = req.params.version
+//         let owner = req.params.ownerID
+//         let judge = req.params.judgeID
+//         await Grade.update(req.body, {
+//             where: {
+//                 projectID: projID,
+//                 version: versionID,
+//                 ownerID: owner,
+//                 judgeID: judge
+//             }
+//         })
+//         res.status(200).json({ message: "updated" })
+//     } catch (err) {
+//         next(err)
+//     }
+// })
 
 //Aici revin toate erorile
 app.use((err, req, res, next) => {

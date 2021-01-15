@@ -9,6 +9,10 @@ import ProjectAddForm from './ProjectAddForm'
 import projectStore from './ProjectStore'
 import Project from './Project'
 import Select from 'react-select'
+import TeacherProjectList from './TeacherProjectList'
+import LivrabilAddForm from './LivrabilAddForm'
+import GradeAddForm from './GradeAddForm'
+import gradeStore from './GradeStore'
 let listaMembrii = []
 let listaEchipa = []
 let selectedMemberId = -1
@@ -20,11 +24,16 @@ class App extends React.Component{
       people:[],
       projects: [],
       myProjects: [],
+      foreignProjects: [],
+      projectsForTeacher: [],
+      grades: [],
       registerType: 'Log In',
       projectStatus: 'myProjects',
       isCorrect: false,
       loggedPersonId: -1,
-      loggedPersonType: ''
+      loggedPersonType: '',
+      selected: -1,
+      link: 'www.youtube.com'
     }
     this.logIn =(value)=>
     {
@@ -37,12 +46,115 @@ class App extends React.Component{
               loggedPersonId: person.id,
               loggedPersonType: person.type
             })
-            this.state.projects.forEach(project => {
-              if(project.personID === person.id && project.version === 1)
-              {
-                this.state.myProjects.push(project)
-              }
-            })
+            if(person.type === 'TEACHER')
+            {
+              this.state.projects.forEach(project => {
+                let proiectDummy
+                let titleDeAdaugat = project.title + ', versiunea ' + project.version
+                let contor = -1
+                this.state.projectsForTeacher.forEach(projectDeVerificat => {
+                  if(titleDeAdaugat === projectDeVerificat.title)
+                  {
+                    contor = 1
+                  }
+                })
+                if(contor === -1)
+                {
+                  proiectDummy = {
+                    id: project.id,
+                    fileLink: project.fileLink,
+                    version: project.version,
+                    title: titleDeAdaugat,
+                    deadline: project.deadline,
+                    personID: project.personID
+                  }
+                  this.state.projectsForTeacher.push(proiectDummy)
+                }
+              })
+              let numeProiect = ''
+              let versiune = 0
+              this.state.projectsForTeacher.forEach(project =>{
+                this.state.projects.forEach(projectDeVerificat =>{
+                  if(project.id === projectDeVerificat.id)
+                  {
+                    numeProiect = projectDeVerificat.title
+                    versiune = projectDeVerificat.version
+                  }
+                })
+                let grade = 0
+                let sum = 0
+                let count = 0
+                let min = 11
+                let max = 1
+                this.state.grades.forEach(gradeDeAdaugat =>{
+                  if(gradeDeAdaugat.projectTitle === numeProiect && gradeDeAdaugat.version === versiune)
+                  {
+                    count ++
+                    sum = sum + gradeDeAdaugat.grade
+                    if(gradeDeAdaugat.grade > max)
+                    {
+                      max = gradeDeAdaugat.grade
+                    }
+                    if(gradeDeAdaugat.grade < min)
+                    {
+                      min = gradeDeAdaugat.grade
+                    }
+                  }
+                })
+                if(count === 0)
+                {
+                  project.title = project.title + ", nu exista note"
+                }
+                else{
+                  if(count >= 3){
+                    sum = sum - max - min
+                    grade = sum / (count - 2)
+                  }
+                  else{
+                    grade = sum / count
+                  }
+                  project.title = project.title + ", nota: " + grade.toString()
+                }
+              })
+            }
+            else
+            {
+              this.state.projects.forEach(project => {
+                if(project.personID === person.id && project.version === 1)
+                {
+                  this.state.myProjects.push(project)
+                }
+              })
+              this.state.projects.forEach(project => {
+                let contor = -1
+                let proiectDummy
+                let titleDeAdaugat = project.title + ', versiunea' + project.version
+                this.state.myProjects.forEach(projectDeVerificat => {
+                  if(project.title === projectDeVerificat.title)
+                  {
+                    contor = 1
+                  }
+                })
+                this.state.foreignProjects.forEach(projectDeVerificat => {
+                  if(titleDeAdaugat === projectDeVerificat.title)
+                  {
+                    contor = 1
+                  }
+                })
+                if(contor === -1)
+                {
+                  proiectDummy = {
+                    id: project.id,
+                    fileLink: project.fileLink,
+                    version: project.version,
+                    title: titleDeAdaugat,
+                    deadline: project.deadline,
+                    personID: project.personID
+                  }
+                  this.state.foreignProjects.push(proiectDummy)
+                }
+              })
+            }
             check = true
           }
         })
@@ -117,7 +229,8 @@ class App extends React.Component{
     }
     this.createProject=()=>{
       this.setState({
-        projectStatus: 'create'
+        projectStatus: 'create',
+        selected: -1
       })
       listaEchipa = []
       listaMembrii = []
@@ -145,18 +258,24 @@ class App extends React.Component{
     }
     this.myProjects=()=>{
       this.setState({
-        projectStatus: 'myProjects'
+        projectStatus: 'myProjects',
+        selected: -1
       })
     }
     this.gradeProjects=()=>{
       this.setState({
-        projectStatus: 'gradeProjects'
+        projectStatus: 'gradeProjects',
+        selected: -1
       })
     }
     this.addMembruToProject=()=>{
       if(selectedMemberId === -1)
       {
         alert('Trebuie selectat un membru pe care vreti sa il adaugati din lista')
+      }
+      else if(listaEchipa.length >= 3)
+      {
+        alert('Pot fi maxim 3 membrii intr-o echipa')
       }
       else
       {
@@ -191,7 +310,20 @@ class App extends React.Component{
       let secunde = parseInt(project.seconds)
       if(project.title.toString().length === 0)
       {
+        check = false
         alert("Titlul nu trebuie sa fie gol")
+      }
+      let contor = -1
+      this.state.projects.forEach(projectDeVerificat =>{
+        if(project.title === projectDeVerificat.title)
+        {
+          check = false
+          contor = 1
+        }
+      })
+      if(contor === 1)
+      {
+        alert("Titlul proiectului trebuie sa fie unic")
       }
       if(isNaN(an))
       {
@@ -311,6 +443,7 @@ class App extends React.Component{
           let proiectDeAdaugat ={
             version: 1,
             title: project.title,
+            fileLink: project.link,
             deadline: deadlineDeAdaugat,
             personID: membru.id
           }
@@ -319,6 +452,114 @@ class App extends React.Component{
         this.setState({
           projectStatus: 'myProjects'
         })
+      }
+    }
+    this.Select = (id) =>
+    {
+      let linkDeAdaugat
+      this.state.projects.forEach(project => {
+        if(project.id === id)
+        {
+          linkDeAdaugat = project.fileLink
+        }
+      })
+      this.setState({
+        selected: id,
+        link: linkDeAdaugat
+      })
+    }
+    this.addLivrabil = (value) =>{
+      let check = true
+      if(value.link.toString().length === 0)
+      {
+        check = false
+        alert('Link-ul trebuie completat')
+      }
+      if(check === true)
+      {
+        let numeProiect = ''
+        this.state.projects.forEach(project => {
+          if(project.id === this.state.selected)
+          {
+            numeProiect = project.title
+          }
+        })
+        let contor = 1
+        let index = this.state.projects.length-1
+        let listaProiecteDeAdaugat = []
+        while((contor === 1 || contor === 0) && index >= 0)
+        {
+          if(this.state.projects[index].title === numeProiect)
+          {
+            contor = 0
+            let projectDeAdaugat = {
+              fileLink: '',
+              version: this.state.projects[index].version,
+              title: numeProiect,
+              deadline: this.state.projects[index].deadline,
+              personID: this.state.projects[index].personID
+            }
+            listaProiecteDeAdaugat.push(projectDeAdaugat)
+          }
+          else if(contor === 0)
+          {
+            contor = 2
+          }
+          index--
+        }
+        listaProiecteDeAdaugat.forEach(project => {
+          project.fileLink = value.link
+          project.version++
+          projectStore.addOne(project)
+        })
+      }
+    }
+    this.viziteazaLink=()=>{
+      window.open(this.state.link.toString())
+    }
+    this.addGrade=(value)=>{
+      let check = true
+      if(isNaN(parseFloat(value.grade)))
+      {
+        check = false
+        alert("Nota trebuie sa fie un numar")
+      }
+      else if(parseFloat(value.grade) < 1 || parseFloat(value.grade) > 10)
+      {
+        check = false
+        alert("Nota trebuie sa fie intre 1 si 10")
+      }
+      if(check === true)
+      {
+        let numeProiect = ''
+        let versionDeAdaugat = 0
+        let deadlineDeParsat
+        this.state.projects.forEach(project => {
+          if(project.id === this.state.selected)
+          {
+            numeProiect = project.title
+            versionDeAdaugat = project.version
+            deadlineDeParsat = project.deadline
+          }
+        })
+        if(Date.now - Date.parse(deadlineDeParsat) < 0)
+        {
+          alert("Nu a trecut deadline-ul inca")
+        }
+        else if (Date.now - Date.parse(deadlineDeParsat) > 2592000000)
+        {
+          alert("A trecut timpul destinat acordarii notelor")
+        }
+        else
+        {
+          let grade = 
+          {
+            projectTitle: numeProiect,
+            version: versionDeAdaugat,
+            grade: parseFloat(value.grade)
+          }
+          gradeStore.addOne(grade)
+         }
       }
     }
   }
@@ -337,15 +578,77 @@ class App extends React.Component{
       if(this.state.loggedPersonId !== -1)
       {
         let listaProiecteProprii = []
-        projectStore.data.forEach(proiect => {
+        let listaProiecteDeNotat = []
+        let listaProiecteForTeacher = []
+        if(this.state.loggedPersonType === 'TEACHER')
+        {
+              projectStore.data.forEach(project => {
+                let proiectDummy
+                let titleDeAdaugat = project.title + ', versiunea ' + project.version
+                let contor = -1
+                listaProiecteForTeacher.forEach(projectDeVerificat => {
+                  if(titleDeAdaugat === projectDeVerificat.title)
+                  {
+                    contor = 1
+                  }
+                })
+                if(contor === -1)
+                {
+                  proiectDummy = {
+                    id: project.id,
+                    fileLink: project.fileLink,
+                    version: project.version,
+                    title: titleDeAdaugat,
+                    deadline: project.deadline,
+                    personID: project.personID
+                  }
+                  listaProiecteForTeacher.push(proiectDummy)
+                }
+              })
+        }
+        else 
+        {
+          projectStore.data.forEach(proiect => {
             if(proiect.personID === this.state.loggedPersonId && proiect.version === 1)
             {
               listaProiecteProprii.push(proiect)
             }
-        })
+          })
+        projectStore.data.forEach(proiect => {
+          let proiectDummy
+          let titleDeAdaugat = proiect.title + ', versiunea ' + proiect.version
+          let contor = -1
+          listaProiecteProprii.forEach(projectDeVerificat => {
+            if(proiect.title === projectDeVerificat.title)
+            {
+              contor = 1
+            }  
+          })
+          listaProiecteDeNotat.forEach(projectDeVerificat => {
+            if(titleDeAdaugat === projectDeVerificat.title)
+            {
+              contor = 1
+            }
+          })
+          if(contor === -1)
+          {
+            proiectDummy = {
+              id: proiect.id,
+              fileLink: proiect.fileLink,
+              version: proiect.version,
+              title: titleDeAdaugat,
+              deadline: proiect.deadline,
+              personID: proiect.personID
+            }
+            listaProiecteDeNotat.push(proiectDummy)
+          }
+        }) 
+        }      
         this.setState({
-          projects:projectStore.data,
-          myProjects: listaProiecteProprii
+          projects: projectStore.data,
+          myProjects: listaProiecteProprii,
+          foreignProjects: listaProiecteDeNotat,
+          projectsForTeacher: listaProiecteForTeacher
         })
       }
       else
@@ -355,8 +658,61 @@ class App extends React.Component{
         })
       }
     })
+    gradeStore.getAll()
+    gradeStore.emitter.addListener('GET_GRADES_SUCCES',()=>{
+      let numeProiect = ''
+      let versiune = 0
+      this.state.projectsForTeacher.forEach(project =>{
+        this.state.projects.forEach(projectDeVerificat =>{
+          if(project.id === projectDeVerificat.id)
+          {
+            numeProiect = projectDeVerificat.title
+            versiune = projectDeVerificat.version
+          }
+        })
+        let grade = 0
+        let sum = 0
+        let count = 0
+        let min = 11
+        let max = 1
+        this.state.grades.forEach(gradeDeAdaugat =>{
+          if(gradeDeAdaugat.projectTitle === numeProiect && gradeDeAdaugat.version === versiune)
+          {
+            count ++
+            sum = sum + gradeDeAdaugat.grade
+            if(gradeDeAdaugat.grade > max)
+            {
+              max = gradeDeAdaugat.grade
+            }
+            if(gradeDeAdaugat.grade < min)
+            {
+              min = gradeDeAdaugat.grade
+            }
+          }
+        })
+        if(count === 0)
+        {
+          project.title = project.title + ", nu exista note"
+        }
+        else{
+          if(count >= 3){
+            sum = sum - max - min
+            grade = sum / (count - 2)
+          }
+          else{
+            grade = sum / count
+          }
+          project.title = project.title + ", nota: " + grade.toString()
+        }
+      })
+      this.setState({
+        grades:gradeStore.data
+      })
+    })
     setInterval(function(){
+      store.getAll()
       projectStore.getAll()
+      gradeStore.getAll()
     },10000)
   }
 render(){
@@ -380,7 +736,7 @@ render(){
   {
     return (    <div>
       <div style={{display: 'block'}}>
-      <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects}/>
+      <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
       </div>
       <div>Membrii echipei: </div>
       <ul>
@@ -397,16 +753,63 @@ render(){
       </div>
     </div>)
   }
+  else if(this.state.isCorrect === true && this.state.projectStatus === 'myProjects' && this.state.loggedPersonType === 'STUDENT' && this.state.selected !== -1)
+  {
+    return (    <div>
+      <div style={{display: 'block'}}>
+      <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
+      {
+      this.state.myProjects.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
+    }
+       <LivrabilAddForm onAddLivrabil={this.addLivrabil}/>
+      </div>
+    </div>)
+  }
   else if(this.state.isCorrect === true && this.state.projectStatus === 'myProjects' && this.state.loggedPersonType === 'STUDENT')
   {
     return (    <div>
       <div style={{display: 'block'}}>
-      <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects}/>
+      <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
       {
-      this.state.myProjects.map(e=><Project item={e} key={e.id}/>)
+      this.state.myProjects.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
     }
       </div>
     </div>)
+  }
+  else if(this.state.isCorrect === true && this.state.projectStatus === 'gradeProjects' && this.state.loggedPersonType === 'STUDENT' && this.state.selected !== -1)
+  {
+    return (    <div>
+      <div style={{display: 'block'}}>
+      <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
+      {
+      this.state.foreignProjects.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
+    }
+      <input type='button' value='Vizioneaza proiectul' onClick={this.viziteazaLink}/>
+      <GradeAddForm onAddGrade={this.addGrade}/>
+      </div>
+    </div>)
+  }
+  else if(this.state.isCorrect === true && this.state.projectStatus === 'gradeProjects' && this.state.loggedPersonType === 'STUDENT')
+  {
+    return (    <div>
+      <div style={{display: 'block'}}>
+      <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
+      {
+      this.state.foreignProjects.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
+    }
+      </div>
+    </div>)
+  }
+  else if(this.state.isCorrect === true && this.state.loggedPersonType === 'TEACHER')
+  {
+    return(
+      <div>
+         <TeacherProjectList/>
+        {
+          this.state.projectsForTeacher.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
+        }  
+      </div>
+    )
   }
 }
 }

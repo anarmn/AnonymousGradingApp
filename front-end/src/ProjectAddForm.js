@@ -6,6 +6,7 @@ class ProjectAddForm extends React.Component{
         super(props)
         this.state={
             title: 'Project title',
+            link: 'www.youtube.com',
             year: 'Year',
             month: 'Month',
             day: 'Day',
@@ -17,6 +18,7 @@ class ProjectAddForm extends React.Component{
         this.saveProject=()=>{
             this.props.onSaveProject({
                 title: this.state.title,
+                link: this.state.link,
                 year: this.state.year,
                 month: this.state.month,
                 day: this.state.day,
@@ -40,6 +42,10 @@ this.handleChange=(evt)=>{
       <div>
           <label htmlFor='title'>Title: </label>
           <input type='text' name='title' id='title' value={this.state.title}
+        onChange={this.handleChange}></input>
+          <br/>
+          <label htmlFor='link'>Link: </label>
+          <input type='text' name='link' id='link' value={this.state.link}
         onChange={this.handleChange}></input>
           <br/>
           <label htmlFor='year'>Year: </label>

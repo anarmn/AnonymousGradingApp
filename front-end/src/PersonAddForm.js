@@ -7,10 +7,11 @@ class PersonAddForm extends React.Component{
         this.state={
             type:'STUDENT',
             name: 'Name',
-            group: 'Group',
-            series: 'Series',
+            group: '1',
+            series: 'A',
             username: 'Username',
-            password: 'Password'
+            password: 'Password',
+            disabled:false
         }
 
         this.add=()=>{
@@ -34,7 +35,15 @@ this.handleChange=(evt)=>{
         //evt are un target=> de unde a pornit evenimentul
         //target imi permite sa accesez propr elem resp
         [evt.target.name]:evt.target.value
+       
     })
+    if (evt.target.name==='type' && evt.target.value==='TEACHER'){
+           this.state.disabled=true;
+    }
+    if (evt.target.name==='type' && evt.target.value==='STUDENT'){
+        this.state.disabled=false;
+}
+
 }
     }
 
@@ -42,20 +51,33 @@ this.handleChange=(evt)=>{
         return(
       <div>
           <label htmlFor='type'>Type: </label>
-          <input type='text' name='type' id='type' value={this.state.type}
-        onChange={this.handleChange}></input>
+          <select id='type' value={this.state.type} name='type' onChange={this.handleChange} >
+                    <option value="STUDENT">STUDENT</option>
+                    <option value="TEACHER">TEACHER</option>
+                    
+        </select>
+    
           <br/>
           <label htmlFor='name'>Name: </label>
           <input type='text' name='name' id='name' value={this.state.name}
            onChange={this.handleChange}></input>
           <br/>
           <label htmlFor='group'>Group: </label>
-          <input type='text' name='group' id='group' value={this.state.group}
-           onChange={this.handleChange}></input>
+          <select id='group' value={this.state.group} name='group' onChange={this.handleChange} disabled={this.state.disabled} >
+                    <option value="1">Grupa 1</option>
+                    <option value="2">Grupa 2</option>
+                    <option value="3">Grupa 3</option>
+                    <option value="4">Grupa 4</option>
+        </select>
+    
           <br/>
           <label htmlFor='series'>Series: </label>
-          <input type='text' name='series' id='series' value={this.state.series}
-           onChange={this.handleChange}></input>
+          <select id='series' value={this.state.series} name='series' onChange={this.handleChange} disabled={this.state.disabled} >
+                    <option value="A">Seria A</option>
+                    <option value="B">Seria B</option>
+                    <option value="C">Seria C</option>
+                    <option value="D">Seria D</option>
+        </select>
           <br/>
           <label htmlFor='username'>Username: </label>
           <input type='text' name='username' id='username' value={this.state.username}

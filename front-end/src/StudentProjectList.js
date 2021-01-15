@@ -14,7 +14,7 @@ class StudentProjectList extends React.Component{
             this.props.onMyProjects({
             })
         }
-        this.GradeProjects=()=>{
+        this.gradeProjects=()=>{
             this.props.onGradeProjects({
             })
         }
