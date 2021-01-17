@@ -1,5 +1,5 @@
 import React from 'react'
-
+import ipStyle from './css/initialProjects.css'
 class StudentProjectList extends React.Component{
     //punem ceva in stare
     constructor (props){
@@ -30,11 +30,11 @@ this.handleChange=(evt)=>{
 
     render(){
         return(
-      <div style={{width: 300, border: 5 }}>
-          <input type='button' value='proiecte' onClick={this.proiecteCreare} style={{width: 300}}></input>
-          <br/>
-            <input type='button' value='My projects' onClick={this.myProjects} style={{width: 150}}></input>
-            <input type='button' value='Grade projects' onClick={this.gradeProjects} style={{width: 150}}></input>
+      <div id='treiButoaneDiv' style={ipStyle}>
+          <input type='button' id='bNP' value='New Projects' onClick={this.proiecteCreare} ></input>
+          
+            <input type='button' id='bMP' value='My projects' onClick={this.myProjects}></input>
+            <input type='button' id='bGP' value='Grade projects' onClick={this.gradeProjects}></input>
       </div>
         )   
     }

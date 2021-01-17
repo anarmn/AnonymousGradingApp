@@ -1,16 +1,16 @@
 import React from 'react'
-
+import sStyle from './css/signinCSS.css'
 class PersonAddForm extends React.Component{
     //punem ceva in stare
     constructor (props){
         super(props)
         this.state={
             type:'STUDENT',
-            name: 'Name',
+            name: '',
             group: '1',
             series: 'A',
-            username: 'Username',
-            password: 'Password',
+            username: '',
+            password: '',
             disabled:false
         }
 
@@ -49,46 +49,64 @@ this.handleChange=(evt)=>{
 
     render(){
         return(
-      <div>
-          <label htmlFor='type'>Type: </label>
-          <select id='type' value={this.state.type} name='type' onChange={this.handleChange} >
+      <div id='mainDivSignin' style={{sStyle}}>
+          <div>
+
+        
+        <div>
+        <label className='lSignin' htmlFor='type'>Type: </label>
+          <select id='type' className='cSignin' value={this.state.type} name='type' onChange={this.handleChange} >
                     <option value="STUDENT">STUDENT</option>
                     <option value="TEACHER">TEACHER</option>
                     
         </select>
-    
-          <br/>
-          <label htmlFor='name'>Name: </label>
-          <input type='text' name='name' id='name' value={this.state.name}
+       </div>
+        <br/>
+        <div>
+        <label className='lSignin' htmlFor='name'>Name: </label>
+          <input type='text'   className='cSignin' name='name' id='name' value={this.state.name}
            onChange={this.handleChange}></input>
-          <br/>
-          <label htmlFor='group'>Group: </label>
-          <select id='group' value={this.state.group} name='group' onChange={this.handleChange} disabled={this.state.disabled} >
+        </div>
+       
+        <br/>
+        <div>
+        <label className='lSignin' htmlFor='group'>Group: </label>
+          <select id='group' className='cSignin' value={this.state.group} name='group' onChange={this.handleChange} disabled={this.state.disabled} >
                     <option value="1">Grupa 1</option>
                     <option value="2">Grupa 2</option>
                     <option value="3">Grupa 3</option>
                     <option value="4">Grupa 4</option>
         </select>
-    
-          <br/>
-          <label htmlFor='series'>Series: </label>
-          <select id='series' value={this.state.series} name='series' onChange={this.handleChange} disabled={this.state.disabled} >
+        </div>
+         <br/>
+         <div>
+         <label className='lSignin' htmlFor='series'>Series: </label>
+          <select   id='series' className='cSignin' value={this.state.series} name='series' onChange={this.handleChange} disabled={this.state.disabled} >
                     <option value="A">Seria A</option>
                     <option value="B">Seria B</option>
                     <option value="C">Seria C</option>
                     <option value="D">Seria D</option>
         </select>
-          <br/>
-          <label htmlFor='username'>Username: </label>
-          <input type='text' name='username' id='username' value={this.state.username}
-           onChange={this.handleChange}></input>
+         </div>
          <br/>
-          <label htmlFor='password'>Password: </label>
-          <input type='text' name='password' id='password' value={this.state.password}
+         <div>
+         <label className='lSignin' htmlFor='username'>Username: </label>
+          <input type='text' className='cSignin' name='username' id='username' value={this.state.username}
            onChange={this.handleChange}></input>
-            <br/>
-            <input type='button' value='add' onClick={this.add}></input>
-            <input type='button' value='cancel' onClick={this.cancel}></input>
+         </div>
+         <br/>
+         <div>
+         <label className='lSignin' htmlFor='password'>Password: </label>
+          <input type='text' className='cSignin' name='password' id='password' value={this.state.password}
+           onChange={this.handleChange}></input>
+         </div>
+         </div>
+          <br/>
+          <div>
+          <input id='bAdd' type='button' value='Add' onClick={this.add}></input>
+            <input id='bCancel' type='button' value='Cancel' onClick={this.cancel}></input>
+          </div>
+            
       </div>
         )   
     }

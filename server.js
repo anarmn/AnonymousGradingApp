@@ -9,7 +9,7 @@ let conn
 //Se creaza baza de date in caz ca aceasta nu exista
 mysql.createConnection({
     user: 'root',
-    password: 'CopilParinteBaba20'
+    password: 'tomaweb'
 })
     .then((connection) => {
         conn = connection
@@ -23,7 +23,7 @@ mysql.createConnection({
     })
 
 //Se creeaza o instanta sequelize ce foloseste baza de date creata de noi
-const sequelize = new Sequelize('anonymous_grading_app', 'root', 'CopilParinteBaba20', {
+const sequelize = new Sequelize('anonymous_grading_app', 'root', 'tomaweb', {
     dialect: 'mysql'
 })
 

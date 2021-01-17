@@ -1,5 +1,5 @@
 import React from 'react'
-
+import gStyle from './css/grade.css'
 class GradeAddForm extends React.Component{
     //punem ceva in stare
     constructor (props){
@@ -24,12 +24,13 @@ this.handleChange=(evt)=>{
 
     render(){
         return(
-      <div>
-          <label htmlFor='grade'>Nota: </label>
+      <div id='mainDivGrade' style={gStyle}>
+          <div>
+          <label className htmlFor='grade'>Nota: </label>
           <input type='text' name='grade' id='grade' value={this.state.grade}
-        onChange={this.handleChange}></input>
+        onChange={this.handleChange}></input></div>
           <br/>
-          <input type='button' value='Adauga nota' onClick={this.addGrade}></input>
+          <input type='button' id='bNota' value='Add Grade' onClick={this.addGrade}></input>
       </div>
         )   
     }

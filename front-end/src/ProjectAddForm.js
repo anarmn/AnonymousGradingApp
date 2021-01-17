@@ -1,18 +1,18 @@
 import React from 'react'
-
+import pafStyle from './css/projaf.css'
 class ProjectAddForm extends React.Component{
     //punem ceva in stare
     constructor (props){
         super(props)
         this.state={
-            title: 'Project title',
-            link: 'www.youtube.com',
-            year: 'Year',
-            month: 'Month',
-            day: 'Day',
-            hour: 'Hour',
-            minutes: 'Minutes',
-            seconds: 'Seconds'
+            title: '',
+            link: '',
+            year: '2021',
+            month: '02',
+            day: '01',
+            hour: '23',
+            minutes: '55',
+            seconds: '00'
         }
 
         this.saveProject=()=>{
@@ -39,41 +39,55 @@ this.handleChange=(evt)=>{
 
     render(){
         return(
-      <div>
-          <label htmlFor='title'>Title: </label>
-          <input type='text' name='title' id='title' value={this.state.title}
+      <div id="mainDivProjaf" style={pafStyle}>
+        
+        <div><pre><label className='lProjectAddForm' htmlFor='title'>Title:   </label>
+          <input type='text'  className='cProjectAddForm' name='title' id='title' value={this.state.title}
+        onChange={this.handleChange}></input></pre></div>
+        
+        <div> <pre>
+        <label className='lProjectAddForm' htmlFor='link'>Link:    </label>
+          <input type='text'  className='cProjectAddForm' name='link' id='link' value={this.state.link}
+        onChange={this.handleChange}></input></pre>
+        </div> 
+        <div><pre>
+        <label className='lProjectAddForm' htmlFor='year'>Year:    </label>
+          <input type='text'  className='cProjectAddForm' name='year' id='year' value={this.state.year}     
+        onChange={this.handleChange}></input></pre>
+        </div> 
+        <div><pre>
+        <label className='lProjectAddForm' htmlFor='month'>Month:   </label>
+          <input type='text' className='cProjectAddForm'  name='month' id='month' value={this.state.month}     
+        onChange={this.handleChange}></input></pre>
+        </div>  
+        <div><pre>
+        <label className='lProjectAddForm' htmlFor='day'>Day:     </label>
+          <input type='text' className='cProjectAddForm'  name='day' id='day' value={this.state.day}     
+        onChange={this.handleChange}></input></pre>
+        </div> 
+        <div><pre>
+        <label className='lProjectAddForm' htmlFor='hour'>Hour:    </label>
+          <input type='text' className='cProjectAddForm'  name='hour' id='gour' value={this.state.hour}     
+        onChange={this.handleChange}></input></pre>
+        </div>
+           
+          <div>
+            <pre>
+          <label className='lProjectAddForm' htmlFor='minutes'>Minutes: </label>
+          <input type='text' className='cProjectAddForm' name='minutes' id='minutes' value={this.state.minutes}     
+        onChange={this.handleChange}></input></pre>
+          </div> 
+          <div><pre>
+          <label className='lProjectAddForm' htmlFor='seconds'>Seconds: </label>
+          <input type='text'  className='cProjectAddForm' name='seconds' id='seconds' value={this.state.seconds}     
         onChange={this.handleChange}></input>
-          <br/>
-          <label htmlFor='link'>Link: </label>
-          <input type='text' name='link' id='link' value={this.state.link}
-        onChange={this.handleChange}></input>
-          <br/>
-          <label htmlFor='year'>Year: </label>
-          <input type='text' name='year' id='year' value={this.state.year}     
-        onChange={this.handleChange}></input>
-          <br/>
-          <label htmlFor='month'>Month: </label>
-          <input type='text' name='month' id='month' value={this.state.month}     
-        onChange={this.handleChange}></input>
-          <br/>
-          <label htmlFor='day'>Day: </label>
-          <input type='text' name='day' id='day' value={this.state.day}     
-        onChange={this.handleChange}></input>
-          <br/>
-          <label htmlFor='hour'>Hour: </label>
-          <input type='text' name='hour' id='gour' value={this.state.hour}     
-        onChange={this.handleChange}></input>
-          <br/>
-          <label htmlFor='minutes'>Minutes: </label>
-          <input type='text' name='minutes' id='minutes' value={this.state.minutes}     
-        onChange={this.handleChange}></input>
-          <br/>
-          <label htmlFor='seconds'>Seconds: </label>
-          <input type='text' name='seconds' id='seconds' value={this.state.seconds}     
-        onChange={this.handleChange}></input>
-          <br/>
-          <input type='button' value='Create Project' onClick={this.saveProject}></input>
-      </div>
+        </pre>
+          </div> 
+          <div>
+          <input type='button' id='bAddProj' value='Create Project' onClick={this.saveProject}></input>
+          </div>
+          
+          </div>
         )   
     }
 }

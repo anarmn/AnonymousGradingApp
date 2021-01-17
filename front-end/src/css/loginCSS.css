@@ -1,0 +1,56 @@
+#mainDivPersonLogin{
+background-color:rgb(161, 240, 236);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+text-align: center;
+min-height: 100vh;
+margin: auto;
+font-family: 'Consolas';
+font-size: 50 px;
+}
+#bl1,#bl2{
+    display: inline;
+    font-style: italic;
+    justify-content: 'center';
+    align-items: 'center';
+   width:150px;
+    margin:10px;
+    margin-top:30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 3px solid cyan;
+    text-align: center;
+    font-size:18px;
+    background-color: lightseagreen;
+    font-family: 'Consolas';
+ 
+  }
+  #bl1:hover,#bl2:hover{
+      background-color: cyan;
+  }
+  .labelPersonLogin{
+    height: 30px;
+    justify-content: 'center';
+    align-items: 'center';
+   margin: 10px;
+   font-size: 20px;
+   font-family: 'Consolas';
+   float:left;
+   clear:right;
+   display:block;
+  }
+  .tbPersonLogin{
+    justify-content: 'center';
+    align-items: 'center';
+    margin:10px;
+    height: 30px;
+    border-radius: 4px;
+    font-family: 'Consolas';
+    font-size:18px;
+  transition: 0.3s all;
+  background-color: lightseagreen;
+  float:right;
+  display:block;
+  }

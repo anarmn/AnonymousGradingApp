@@ -1,0 +1,19 @@
+.bCute{
+    display: inline;
+    font-style: italic;
+    justify-content: 'center';
+    align-items: 'center';
+   width:180px;
+    margin:10px;
+    margin-top:5px;
+    height: 30px;
+    border-radius: 6px;
+    border: 3px solid cyan;
+    text-align: center;
+    font-size:18px;
+    background-color: lightseagreen;
+    font-family: 'Consolas';
+}
+.bCute:hover{
+    background-color: cyan;
+}

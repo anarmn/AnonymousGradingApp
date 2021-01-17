@@ -13,6 +13,7 @@ import TeacherProjectList from './TeacherProjectList'
 import LivrabilAddForm from './LivrabilAddForm'
 import GradeAddForm from './GradeAddForm'
 import gradeStore from './GradeStore'
+import btnStyle from './css/btnStyle.css'
 let listaMembrii = []
 let listaEchipa = []
 let selectedMemberId = -1
@@ -128,7 +129,7 @@ class App extends React.Component{
               this.state.projects.forEach(project => {
                 let contor = -1
                 let proiectDummy
-                let titleDeAdaugat = project.title + ', versiunea' + project.version
+                let titleDeAdaugat = project.title + ', versiune ' + project.version
                 this.state.myProjects.forEach(projectDeVerificat => {
                   if(project.title === projectDeVerificat.title)
                   {
@@ -715,6 +716,7 @@ class App extends React.Component{
       gradeStore.getAll()
     },10000)
   }
+
 render(){
   if((this.state.registerType === 'Log In') && (this.state.isCorrect === false))
   {
@@ -737,15 +739,16 @@ render(){
     return (    <div>
       <div style={{display: 'block'}}>
       <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
-      </div>
-      <div>Membrii echipei: </div>
-      <ul>
+      </div >
+      <div style={{fontFamily:'Consolas',fontSize:16,fontWeight:'bold',fontStyle:'italic',marginTop:'10px',textAlign:'left'}}>Team members: </div>
+      <br></br>
+      <ul style={{fontFamily:'Consolas',fontSize:16,fontWeight:'bold',fontStyle:'italic',marginTop:'10px',width:'300px'}}>
         {listaEchipa.map(e=><li><Person item={e} key={e.id}/></li>)}
       </ul>
       <br/>
-      <Select name="membriiAditionali" id="membriiAditionali" options={listaMembrii} onChange={this.selectieMembruEchipa}></Select>
+      <Select style={{width:'400px'}} name="membriiAditionali" id="membriiAditionali"  options={listaMembrii} onChange={this.selectieMembruEchipa}></Select>
       <br/>
-      <input type="button" value="addMembruToProject" onClick={this.addMembruToProject}></input>
+      <input type="button" className='bCute' style={btnStyle} value="Add Member" onClick={this.addMembruToProject}></input>
       <br/>
       <br/>
       <div style={{display: 'block'}}>
@@ -755,20 +758,21 @@ render(){
   }
   else if(this.state.isCorrect === true && this.state.projectStatus === 'myProjects' && this.state.loggedPersonType === 'STUDENT' && this.state.selected !== -1)
   {
-    return (    <div>
-      <div style={{display: 'block'}}>
+    return (    
+    <div>
+      <div style={{fontFamily:'Consolas',fontSize:22,fontWeight:'bold',fontStyle:'italic',marginTop:'10px'}}>
       <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
       {
       this.state.myProjects.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
     }
        <LivrabilAddForm onAddLivrabil={this.addLivrabil}/>
-      </div>
+      </div>,
     </div>)
   }
   else if(this.state.isCorrect === true && this.state.projectStatus === 'myProjects' && this.state.loggedPersonType === 'STUDENT')
   {
     return (    <div>
-      <div style={{display: 'block'}}>
+      <div style={{fontFamily:'Consolas',fontSize:22,fontWeight:'bold',fontStyle:'italic',marginTop:'10px'}}>
       <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
       {
       this.state.myProjects.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
@@ -779,20 +783,22 @@ render(){
   else if(this.state.isCorrect === true && this.state.projectStatus === 'gradeProjects' && this.state.loggedPersonType === 'STUDENT' && this.state.selected !== -1)
   {
     return (    <div>
-      <div style={{display: 'block'}}>
+      <div style={{fontFamily:'Consolas',fontSize:22,fontWeight:'bold',fontStyle:'italic',marginTop:'10px'}}>
       <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
       {
       this.state.foreignProjects.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
     }
-      <input type='button' value='Vizioneaza proiectul' onClick={this.viziteazaLink}/>
-      <GradeAddForm onAddGrade={this.addGrade}/>
+    
+    <input type='button' value='View Project' className='bCute' style={btnStyle} onClick={this.viziteazaLink}/>
+    <br></br>
+    <GradeAddForm onAddGrade={this.addGrade}/>
       </div>
     </div>)
   }
   else if(this.state.isCorrect === true && this.state.projectStatus === 'gradeProjects' && this.state.loggedPersonType === 'STUDENT')
   {
     return (    <div>
-      <div style={{display: 'block'}}>
+      <div style={{fontFamily:'Consolas',fontSize:22,fontWeight:'bold',fontStyle:'italic',marginTop:'10px'}}>
       <StudentProjectList onCreateProject={this.createProject} onMyProjects={this.myProjects} onGradeProjects={this.gradeProjects}/>
       {
       this.state.foreignProjects.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
@@ -803,8 +809,8 @@ render(){
   else if(this.state.isCorrect === true && this.state.loggedPersonType === 'TEACHER')
   {
     return(
-      <div>
-         <TeacherProjectList/>
+      <div style={{fontFamily:'Consolas',fontSize:22,fontWeight:'bold',fontStyle:'italic',marginTop:'10px'}}>
+         <TeacherProjectList style={btnStyle}/>
         {
           this.state.projectsForTeacher.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
         }  

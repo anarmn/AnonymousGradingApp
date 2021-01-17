@@ -1,0 +1,34 @@
+#mainDivGrade{
+    border: 2px solid #0c4643;
+    stroke-dasharray: 3,3;
+    display: block;
+    background-color:#188781;
+    width: 400px;
+    display: inline-block;
+    margin: 0px auto;
+    margin-top:30px;
+}
+#grade{
+   color:'#ccffff';
+    height: 20px;
+}
+
+#bNota{
+    display: inline;
+    font-style: italic;
+    justify-content: 'center';
+    align-items: 'center';
+   width:180px;
+    margin:10px;
+    margin-top:30px;
+    height: 30px;
+    border-radius: 6px;
+    border: 3px solid cyan;
+    text-align: center;
+    font-size:18px;
+    background-color: lightseagreen;
+    font-family: 'Consolas';
+}
+#bNota:hover{
+    background-color: cyan;
+}

@@ -1,5 +1,5 @@
 import React from 'react'
-
+import styleLogin from './css/loginCSS.css'
 class PersonLogIn extends React.Component{
     //punem ceva in stare
     constructor (props){
@@ -33,17 +33,23 @@ this.handleChange=(evt)=>{
 
     render(){
         return(
-      <div>
-          <label htmlFor='username'>Username</label>
-          <input type='text' name='username' id='username' value={this.state.username}
+      <div id='mainDivPersonLogin' style={styleLogin}>
+          <div>
+          <label htmlFor='username' className='labelPersonLogin'>Username</label>
+          <input type='text' className='tbPersonLogin' name='username' id='username' value={this.state.username}
            onChange={this.handleChange}></input>
-         <br/>
-          <label htmlFor='password'>Password</label>
-          <input type='text' name='password' id='password' value={this.state.password}
+          </div>
+          
+         <div>
+         <label htmlFor='password' className='labelPersonLogin'>Password</label>
+          <input type='text' className='tbPersonLogin' name='password' id='password' value={this.state.password}
            onChange={this.handleChange}></input>
-            <br/>
-            <input type='button' value='Log in' onClick={this.logIn}></input>
-            <input type='button' value='Sign in' onClick={this.signIn}></input>
+        </div>
+          <div style={{display:'block'}}>
+          <input type='button' id='bl1' value='Log in' onClick={this.logIn}></input>
+            <input type='button' id='bl2' value='Sign in' onClick={this.signIn}></input>
+          </div>
+            
       </div>
         )   
     }
