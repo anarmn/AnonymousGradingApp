@@ -12,12 +12,9 @@ class GradeStore{
             const response=await fetch(`${SERVER}/grades`)
             const data=await response.json()
             this.data=data
-            //cum afla ceilalti ca am date noi?=>eventEmitter=>folosesc unul preexistent=>adaug o noua dependenta npm i fbemitter --save
-
             this.emitter.emit("GET_GRADES_SUCCES")
         }catch(err){
             console.warn(err)
-            
             this.emitter.emit("GET_GRADES_ERR")
         }
     }
@@ -32,10 +29,7 @@ class GradeStore{
         },
         body:JSON.stringify(grade)
     })
-//daca un alt ut a mai adaugat o persoana?
-    this.getAll();
 
-//this.emitter.emit('ADD_PERSON_SUCCES')
 
         }catch(err){
             console.warn(err)

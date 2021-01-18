@@ -5,8 +5,7 @@ class LivrabilAddForm extends React.Component{
     constructor (props){
         super(props)
         this.state={
-
-            link: ''
+             link: ''
         }
 
         this.addLivrabil=()=>{
@@ -14,7 +13,7 @@ class LivrabilAddForm extends React.Component{
                 link: this.state.link
             })
         }
-        //cum fac ca ceva ce se schimba in controale sa ajunga in stare=>ONCHANGE
+        
 this.handleChange=(evt)=>{
     this.setState({
         //evt are un target=> de unde a pornit evenimentul

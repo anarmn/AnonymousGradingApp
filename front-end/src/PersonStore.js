@@ -12,8 +12,6 @@ class PlaneStore{
             const response=await fetch(`${SERVER}/people`)
             const data=await response.json()
             this.data=data
-            //cum afla ceilalti ca am date noi?=>eventEmitter=>folosesc unul preexistent=>adaug o noua dependenta npm i fbemitter --save
-
             this.emitter.emit("GET_PEOPLE_SUCCES")
         }catch(err){
             console.warn(err)
@@ -32,10 +30,6 @@ class PlaneStore{
         },
         body:JSON.stringify(person)
     })
-//daca un alt ut a mai adaugat o persoana?
-    this.getAll();
-
-//this.emitter.emit('ADD_PERSON_SUCCES')
 
         }catch(err){
             console.warn(err)

@@ -12,7 +12,7 @@ class GradeAddForm extends React.Component{
                 grade: this.state.grade
             })
         }
-        //cum fac ca ceva ce se schimba in controale sa ajunga in stare=>ONCHANGE
+        
 this.handleChange=(evt)=>{
     this.setState({
         //evt are un target=> de unde a pornit evenimentul

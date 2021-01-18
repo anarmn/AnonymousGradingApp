@@ -27,7 +27,7 @@ class ProjectAddForm extends React.Component{
                 seconds: this.state.seconds
             })
         }
-        //cum fac ca ceva ce se schimba in controale sa ajunga in stare=>ONCHANGE
+    
 this.handleChange=(evt)=>{
     this.setState({
         //evt are un target=> de unde a pornit evenimentul

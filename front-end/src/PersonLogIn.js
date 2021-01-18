@@ -10,18 +10,18 @@ class PersonLogIn extends React.Component{
         }
 
         this.logIn=()=>{
-            //foloseste ce am primit de la parent
+        
             this.props.onLog({
                 username: this.state.username,
                 password: this.state.password
             })
         }
         this.signIn=()=>{
-            //foloseste ce am primit de la parent
+          
             this.props.onSign({
             })
         }
-        //cum fac ca ceva ce se schimba in controale sa ajunga in stare=>ONCHANGE
+        
 this.handleChange=(evt)=>{
     this.setState({
         //evt are un target=> de unde a pornit evenimentul

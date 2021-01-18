@@ -15,7 +15,7 @@ class PersonAddForm extends React.Component{
         }
 
         this.add=()=>{
-            //foloseste ce am primit de la parent
+         
             this.props.onAdd({
                 type: this.state.type,
                 name: this.state.name,
@@ -29,7 +29,7 @@ class PersonAddForm extends React.Component{
             this.props.onCancel({
             })
         }
-        //cum fac ca ceva ce se schimba in controale sa ajunga in stare=>ONCHANGE
+    
 this.handleChange=(evt)=>{
     this.setState({
         //evt are un target=> de unde a pornit evenimentul

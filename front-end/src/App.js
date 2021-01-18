@@ -21,6 +21,7 @@ let selectedMemberId = -1
 class App extends React.Component{
   constructor(){
     super()
+    //starea aplicatiei
     this.state={
       people:[],
       projects: [],
@@ -36,6 +37,9 @@ class App extends React.Component{
       selected: -1,
       link: 'www.youtube.com'
     }
+    //functia face validari pe date si permite accesul la alta componenta a interfetei daca datele se gasesc in tabela PEOPLE
+    //daca user-ul logat este de tip TEACHER populeaza lista cu toate proiectele si toate versiunile lor si notele aferente cu posibilitatea de a viziona proiectele
+    //daca user-ul logat este de tip STUDENT, populeaza lista cu toate proiectele proprii si inca 2 butoane pentru a adauga un proiect si a vizualiza proiectele celorlalte echipe
     this.logIn =(value)=>
     {
         let check = false
@@ -49,6 +53,7 @@ class App extends React.Component{
             })
             if(person.type === 'TEACHER')
             {
+              //din toate proiectele din BD populeaza proiectele pentru utilizatorul TEACHER pentru a avea o intrare a unei versiuni de proiect unica 
               this.state.projects.forEach(project => {
                 let proiectDummy
                 let titleDeAdaugat = project.title + ', versiunea ' + project.version
@@ -114,18 +119,21 @@ class App extends React.Component{
                   else{
                     grade = sum / count
                   }
-                  project.title = project.title + ", nota: " + grade.toString()
+      
+                  project.title = project.title + ", nota: " + grade.toFixed(2)
                 }
               })
             }
             else
             {
+              //populeaza lista cu proiectele user-ului logat, daca acesta este STUDENT
               this.state.projects.forEach(project => {
                 if(project.personID === person.id && project.version === 1)
                 {
                   this.state.myProjects.push(project)
                 }
               })
+              //populeaza lista cu proiectele care pot fi notate, cu intrare unica pentru fiecare versiune a unui proiect, respectiv proiectele din care user-ul logat nu contribuie
               this.state.projects.forEach(project => {
                 let contor = -1
                 let proiectDummy
@@ -164,11 +172,13 @@ class App extends React.Component{
           alert('Nu sunt corecte datele introduse de logare.')
         }
     }
+    //afiseaza interfata de sign in
     this.signIn =()=>{
       this.setState({
         registerType: 'Sign In'
       })
     }
+    //adauga o persoana in baza de date in cazul in care datele introduse sunt valide
     this.add=(person)=>{
       let check = true
       if(person.type !== 'TEACHER' && person.type !== 'STUDENT')
@@ -207,6 +217,18 @@ class App extends React.Component{
           alert('Username-ul exista deja')
         }
       })
+      if(person.name.toString().length<1){
+        check=false;
+        alert('Completati numele!')
+      }
+      if (person.password.toString().length<1){
+        check=false;
+        alert('Completati parola!')
+      }
+      if (person.username.toString().length<1){
+        check=false;
+        alert('Completati ussername-ul!')
+      }
       if(check === true)
       {
         person.series = person.series.toUpperCase()
@@ -223,11 +245,14 @@ class App extends React.Component{
         })
       }
     }
+    //afiseaza fereastra de log in 
     this.cancel=()=>{
       this.setState({
         registerType: 'Log In'
       })
     }
+    //creeaza un proiect daca datele sunt valide 
+    //populeaza in baza de date pentru fiecare membru al echipei o intrare 
     this.createProject=()=>{
       this.setState({
         projectStatus: 'create',
@@ -253,30 +278,35 @@ class App extends React.Component{
         }
       })
     }
+    //primeste id-ul din Select-ul de membri posibili
     this.selectieMembruEchipa=(evt)=>
     {
         selectedMemberId = evt.value
     }
+    //afiseaza interfata proiectelor utilizatorului de tip student
     this.myProjects=()=>{
       this.setState({
         projectStatus: 'myProjects',
         selected: -1
       })
     }
+    //afiseaza interfata proiectelor pe care le poate nota utilizatorul de tip student
     this.gradeProjects=()=>{
       this.setState({
         projectStatus: 'gradeProjects',
         selected: -1
       })
     }
+    //se populeaza lista cu membri selectati pentru echipa
+    //o echipa poate avea maximum 4 persoane
     this.addMembruToProject=()=>{
       if(selectedMemberId === -1)
       {
         alert('Trebuie selectat un membru pe care vreti sa il adaugati din lista')
       }
-      else if(listaEchipa.length >= 3)
+      else if(listaEchipa.length >= 4)
       {
-        alert('Pot fi maxim 3 membrii intr-o echipa')
+        alert('Pot fi maxim 4 membrii intr-o echipa')
       }
       else
       {
@@ -301,6 +331,9 @@ class App extends React.Component{
         selectedMemberId = -1
       }
     }
+    //adauga un proiect in cazul in care datele introduse sunt valide
+    //pe baza campurilor temporale creeaza un format de tip DATE pentru baza de date
+    //ne afiseaza din nou interfata cu proiectele proprii dupa creare
     this.addProject=(project)=>{
       let check = true
       let an = parseInt(project.year)
@@ -325,6 +358,10 @@ class App extends React.Component{
       if(contor === 1)
       {
         alert("Titlul proiectului trebuie sa fie unic")
+      }
+      if(project.link.toString().length<1){
+        check=false;
+        alert('Introduceti link-ul')
       }
       if(isNaN(an))
       {
@@ -455,6 +492,7 @@ class App extends React.Component{
         })
       }
     }
+    //odata cu apsarea pe un element din orice lista de proiecte se obtin id-ul si link-ul aferente proiectului
     this.Select = (id) =>
     {
       let linkDeAdaugat
@@ -469,6 +507,7 @@ class App extends React.Component{
         link: linkDeAdaugat
       })
     }
+    //se adauga un livrabil pentru proiectul selectat
     this.addLivrabil = (value) =>{
       let check = true
       if(value.link.toString().length === 0)
@@ -476,6 +515,7 @@ class App extends React.Component{
         check = false
         alert('Link-ul trebuie completat')
       }
+
       if(check === true)
       {
         let numeProiect = ''
@@ -508,16 +548,23 @@ class App extends React.Component{
           }
           index--
         }
+      
         listaProiecteDeAdaugat.forEach(project => {
           project.fileLink = value.link
           project.version++
           projectStore.addOne(project)
+
+        })
+        this.setState({
+          selected:-1
         })
       }
     }
+    //se deschide intr-un nou tab link-ul proiectului selectat
     this.viziteazaLink=()=>{
       window.open(this.state.link.toString())
     }
+    //se adauga o nota pentru proiectul selectat doar daca nu au trecut mai mult de 30 de zile de la deadline
     this.addGrade=(value)=>{
       let check = true
       if(isNaN(parseFloat(value.grade)))
@@ -557,17 +604,20 @@ class App extends React.Component{
           {
             projectTitle: numeProiect,
             version: versionDeAdaugat,
-            grade: parseFloat(value.grade)
+            grade: parseFloat(parseFloat(value.grade).toFixed(2))
           }
           gradeStore.addOne(grade)
+          this.setState({
+            selected:-1
+          })
          }
       }
     }
   }
 
   componentDidMount(){
-    //iau persoane de pe server 
-  //store se ocupa cu comunicarea cu serverul
+   //iau persoane, note, proiecte de pe server 
+   //store se ocupa de comunicarea cu serverul 
     store.getAll()
     store.emitter.addListener('GET_PEOPLE_SUCCES',()=>{
       this.setState({
@@ -703,21 +753,23 @@ class App extends React.Component{
           else{
             grade = sum / count
           }
-          project.title = project.title + ", nota: " + grade.toString()
+          project.title = project.title + ", nota: " + grade.toFixed(2)
         }
       })
       this.setState({
         grades:gradeStore.data
       })
     })
+    //in cazul in care se fac modificari pe server de la alt client, sa se afiseze modificarile si pe clientul curent
     setInterval(function(){
       store.getAll()
       projectStore.getAll()
       gradeStore.getAll()
     },10000)
   }
-
+//se ocupa de interfata proiectului
 render(){
+  //afiseaza componentele ecranului de log in
   if((this.state.registerType === 'Log In') && (this.state.isCorrect === false))
   {
     return (
@@ -726,14 +778,15 @@ render(){
         </div>
     )
   }
+  //afiseaza componentele ecranului de sign in 
   else if(this.state.registerType === 'Sign In'&& (this.state.isCorrect === false))
   {return (
   <div>
-{/* ii dau fct add ca proprietate */}
     <PersonAddForm onAdd={this.add} onCancel={this.cancel}/>
   </div>
   )
   }
+  //afiseaza componentele ecranului de creare proiect
   else if(this.state.isCorrect === true && this.state.projectStatus === 'create' && this.state.loggedPersonType === 'STUDENT')
   {
     return (    <div>
@@ -756,6 +809,7 @@ render(){
       </div>
     </div>)
   }
+  //afiseaza componentele ecranului de afisare proiecte proprii + interfata de adaugare livrabil
   else if(this.state.isCorrect === true && this.state.projectStatus === 'myProjects' && this.state.loggedPersonType === 'STUDENT' && this.state.selected !== -1)
   {
     return (    
@@ -769,6 +823,7 @@ render(){
       </div>,
     </div>)
   }
+  //afiseaza componentele ecranului de afisare proiecte proprii 
   else if(this.state.isCorrect === true && this.state.projectStatus === 'myProjects' && this.state.loggedPersonType === 'STUDENT')
   {
     return (    <div>
@@ -780,6 +835,7 @@ render(){
       </div>
     </div>)
   }
+  //afiseaza componentele ecranului de notare proiecte + interfata de adaugare a unei note
   else if(this.state.isCorrect === true && this.state.projectStatus === 'gradeProjects' && this.state.loggedPersonType === 'STUDENT' && this.state.selected !== -1)
   {
     return (    <div>
@@ -795,6 +851,7 @@ render(){
       </div>
     </div>)
   }
+  //afiseaza componentele ecranului de notare proiecte
   else if(this.state.isCorrect === true && this.state.projectStatus === 'gradeProjects' && this.state.loggedPersonType === 'STUDENT')
   {
     return (    <div>
@@ -806,6 +863,21 @@ render(){
       </div>
     </div>)
   }
+  //afiseaza componentele ecranului cu lista completa de proiecte + interfata de vizualizare proiecte pentru TEACHER
+  else if(this.state.isCorrect === true && this.state.loggedPersonType === 'TEACHER'&& this.state.selected !== -1 )
+  {
+    return(
+      <div style={{fontFamily:'Consolas',fontSize:22,fontWeight:'bold',fontStyle:'italic',marginTop:'10px'}}>
+         <TeacherProjectList style={btnStyle}/>
+        {
+          this.state.projectsForTeacher.map(e=><Project item={e} key={e.id} onSelect={this.Select}/>)
+        }  
+        <input type='button' value='View Project' className='bCute' style={btnStyle} onClick={this.viziteazaLink}/>
+    
+      </div>
+    )
+  }
+  //afiseaza componentele ecranului cu lista completa de proiecte
   else if(this.state.isCorrect === true && this.state.loggedPersonType === 'TEACHER')
   {
     return(
